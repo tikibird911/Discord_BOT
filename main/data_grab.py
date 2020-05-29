@@ -103,4 +103,5 @@ def all_data(name='Bot Scrapes', is_data=False):
     df_one, df_two = get_extra_data()
     convo = pd.concat([convo, df_two.sample(len(convo))])
     speach_lines = pd.concat([speach_lines, df_one])
+    speach_lines['uid'] = speach_lines['uid'].str.replace(' ', '')
     return convo, speach_lines
