@@ -366,10 +366,10 @@ def transformer(vocab_size,
 
 
 def get_model(VOCAB_SIZE,
-              NUM_LAYERS = 3,
+              NUM_LAYERS = 4,
              D_MODEL = 512,
              NUM_HEADS = 8,
-             UNITS = 1024,
+             UNITS = 2048,
              DROPOUT = 0.1):
     tf.keras.backend.clear_session()
 
