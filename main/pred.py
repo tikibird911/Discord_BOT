@@ -1,6 +1,7 @@
 
 from main.model import (preprocess_sentence,
-                                    load_conversations)
+                        load_conversations,
+                        get_model)
 import tensorflow_datasets as tfds
 import tensorflow as tf
 
@@ -44,8 +45,13 @@ def evaluate(sentence, model, tokenizer):
 
 
 def predict(sentence, tokenizer, model_path):
-
-    model = tf.saved_model.load(model_path)
+    # Vocabulary size plus start and end token
+    VOCAB_SIZE = tokenizer.vocab_size + 2
+    model = get_model(VOCAB_SIZE)
+    # Directory where the checkpoints will be saved
+    checkpoint_dir = f'./BOT'
+    model.load_weights(tf.train.latest_checkpoint(checkpoint_dir))
+    model.build()
     prediction = evaluate(sentence, model, tokenizer)
 
     predicted_sentence = tokenizer.decode(
