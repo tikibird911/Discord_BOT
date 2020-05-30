@@ -35,6 +35,7 @@ def load_conversations(convo, speach_lines):
             outputs.append(preprocess_sentence(id2line[conversation[i + 1]]))
     return inputs, outputs
 
+
 # Tokenize, filter and pad sentences
 def tokenize_and_filter(inputs, outputs, START_TOKEN, END_TOKEN, tokenizer, MAX_LENGTH):
     tokenized_inputs, tokenized_outputs = [], []
@@ -162,6 +163,7 @@ def create_look_ahead_mask(x):
     look_ahead_mask = 1 - tf.linalg.band_part(tf.ones((seq_len, seq_len)), -1, 0)
     padding_mask = create_padding_mask(x)
     return tf.maximum(look_ahead_mask, padding_mask)
+
 
 class PositionalEncoding(tf.keras.layers.Layer):
 
