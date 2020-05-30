@@ -1,5 +1,5 @@
 
-from Discord_BOT.main.model import (preprocess_sentence,
+from main.model import (preprocess_sentence,
                                     load_conversations)
 import tensorflow_datasets as tfds
 import tensorflow as tf
