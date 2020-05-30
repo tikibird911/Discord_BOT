@@ -43,8 +43,9 @@ def evaluate(sentence, model, tokenizer):
     return tf.squeeze(output, axis=0)
 
 
-def predict(sentence, tokenizer, model):
+def predict(sentence, tokenizer, model_path):
 
+    model = tf.saved_model.load(model_path)
     prediction = evaluate(sentence, model, tokenizer)
 
     predicted_sentence = tokenizer.decode(
