@@ -42,7 +42,7 @@ def predict(sentence, tokenizer):
     # Directory where the checkpoints will be saved
     checkpoint_dir = f'./BOT'
     model.load_weights(tf.train.latest_checkpoint(checkpoint_dir))
-    model.build(tf.TensorShape([8169, 512]))
+    model.build()
     prediction = evaluate(sentence, model, tokenizer)
 
     predicted_sentence = tokenizer.decode(
