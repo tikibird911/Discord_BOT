@@ -6,15 +6,6 @@ import tensorflow_datasets as tfds
 import tensorflow as tf
 
 
-def get_token(convo, speach_lines):
-    questions, answers = load_conversations(convo, speach_lines)
-
-    # Build tokenizer using tfds for both questions and answers
-    tokenizer = tfds.features.text.SubwordTextEncoder.build_from_corpus(
-        questions + answers, target_vocab_size=2 ** 13)
-    return tokenizer
-
-
 def evaluate(sentence, model, tokenizer):
 
     START_TOKEN, END_TOKEN = [tokenizer.vocab_size], [tokenizer.vocab_size + 1]
@@ -44,14 +35,14 @@ def evaluate(sentence, model, tokenizer):
     return tf.squeeze(output, axis=0)
 
 
-def predict(sentence, tokenizer, model_path):
+def predict(sentence, tokenizer):
     # Vocabulary size plus start and end token
     VOCAB_SIZE = tokenizer.vocab_size + 2
     model = get_model(VOCAB_SIZE)
     # Directory where the checkpoints will be saved
     checkpoint_dir = f'./BOT'
     model.load_weights(tf.train.latest_checkpoint(checkpoint_dir))
-    model.build()
+    model.build(tf.TensorShape([8169, 512]))
     prediction = evaluate(sentence, model, tokenizer)
 
     predicted_sentence = tokenizer.decode(
