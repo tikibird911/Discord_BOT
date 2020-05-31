@@ -2,9 +2,8 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 import tensorflow as tf
-import tensorflow_datasets as tfds
+from main.pred import get_token
 import re
-
 
 
 def preprocess_sentence(sentence):
@@ -383,6 +382,7 @@ def get_model(VOCAB_SIZE,
         dropout=DROPOUT)
     return model
 
+
 def loss_function(y_true, y_pred):
     y_true = tf.reshape(y_true, shape=(-1, 50 - 1))
 
@@ -410,7 +410,6 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
         arg2 = step * (self.warmup_steps**-1.5)
 
         return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
-
 
 
 def train_model(convo, speach_lines, EPOCHS=20, D_MODEL=512, load_model=True):
