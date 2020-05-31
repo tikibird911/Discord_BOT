@@ -342,7 +342,7 @@ class Discord:
                 continue
             
             date += timedelta(days=-1)
-            time.sleep(1)
+            time.sleep(2)
 
     def grab_server_data(self):
         """Scan and grab the attachments within a server."""
