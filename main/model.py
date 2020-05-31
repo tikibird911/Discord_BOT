@@ -412,14 +412,10 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
         return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
 
+
 def train_model(convo, speach_lines, EPOCHS=20, D_MODEL=512, load_model=True):
 
-    questions, answers = load_conversations(convo, speach_lines)
-
-    # Build tokenizer using tfds for both questions and answers
-    tokenizer = tfds.features.text.SubwordTextEncoder.build_from_corpus(
-        questions + answers, target_vocab_size=2 ** 13)
-
+    tokenizer = get_token(convo, speach_lines)
     # Define start and end token to indicate the start and end of a sentence
     START_TOKEN, END_TOKEN = [tokenizer.vocab_size], [tokenizer.vocab_size + 1]
 
@@ -467,5 +463,4 @@ def train_model(convo, speach_lines, EPOCHS=20, D_MODEL=512, load_model=True):
 
         # Directory where the checkpoints will be saved
         model.save_weights(checkpoint_prefix)
-
     return model
