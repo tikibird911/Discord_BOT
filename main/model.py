@@ -412,7 +412,7 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
         return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
 
-def train_model(convo, speach_lines,EPOCHS=1 , D_MODEL=512, load_model=True):
+def train_model(convo, speach_lines, EPOCHS=20, D_MODEL=512, load_model=True):
 
     questions, answers = load_conversations(convo, speach_lines)
 
@@ -446,6 +446,8 @@ def train_model(convo, speach_lines,EPOCHS=1 , D_MODEL=512, load_model=True):
     # model weights save path and vocab save path
     checkpoint_prefix = f'./BOT/ckpt_BOT.h5'
     vocab_store = f'./BOT/vocab.txt'
+    if not os.path.isdir(f'./BOT'):
+        os.mkdir(f'./BOT/')
     if load_model:
         # load the model and vocab size
         f = open(vocab_store, "r")
