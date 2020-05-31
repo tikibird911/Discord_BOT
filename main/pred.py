@@ -44,14 +44,8 @@ def evaluate(sentence, model, tokenizer):
     return tf.squeeze(output, axis=0)
 
 
-def predict(sentence, tokenizer, model_path):
-    # Vocabulary size plus start and end token
-    VOCAB_SIZE = tokenizer.vocab_size + 2
-    model = get_model(VOCAB_SIZE)
-    # Directory where the checkpoints will be saved
-    checkpoint_dir = f'./BOT'
-    model.load_weights(tf.train.latest_checkpoint(checkpoint_dir))
-    model.build()
+def predict(sentence, tokenizer, model):
+
     prediction = evaluate(sentence, model, tokenizer)
 
     predicted_sentence = tokenizer.decode(

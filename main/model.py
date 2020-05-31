@@ -217,7 +217,6 @@ def encoder_layer(units, d_model, num_heads, dropout, name="encoder_layer"):
     return tf.keras.Model(
       inputs=[inputs, padding_mask], outputs=outputs, name=name)
 
-
 def encoder(vocab_size,
             num_layers,
             units,
@@ -413,7 +412,7 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
         return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
 
-def train_model(convo, speach_lines,EPOCHS = 20, D_MODEL=512):
+def train_model(convo, speach_lines,EPOCHS=1 , D_MODEL=512, load_model=True):
 
     questions, answers = load_conversations(convo, speach_lines)
 
@@ -444,15 +443,27 @@ def train_model(convo, speach_lines,EPOCHS = 20, D_MODEL=512):
         y_true = tf.reshape(y_true, shape=(-1, MAX_LENGTH - 1))
         return tf.keras.metrics.sparse_categorical_accuracy(y_true, y_pred)
 
-    model = get_model(VOCAB_SIZE=VOCAB_SIZE)
-    model.compile(optimizer=optimizer, loss=loss_function, metrics=[accuracy])
+    # model weights save path and vocab save path
+    checkpoint_prefix = f'./BOT/ckpt_BOT.h5'
+    vocab_store = f'./BOT/vocab.txt'
+    if load_model:
+        # load the model and vocab size
+        f = open(vocab_store, "r")
+        VOCAB_SIZE = int(f.read())
+        model = get_model(VOCAB_SIZE=VOCAB_SIZE)
+        model.compile(optimizer=optimizer, loss=loss_function, metrics=[accuracy])
+        model.load_weights(checkpoint_prefix)
+    else:
+        # make the model and save it
+        model = get_model(VOCAB_SIZE=VOCAB_SIZE)
+        f = open(vocab_store, "w")
+        f.write(str(VOCAB_SIZE))
+        f.close()
 
-    model.fit(dataset, epochs=EPOCHS)
+        model.compile(optimizer=optimizer, loss=loss_function, metrics=[accuracy])
+        model.fit(dataset, epochs=EPOCHS)
 
-    # Directory where the checkpoints will be saved
-    checkpoint_dir = f'./BOT'
-    # Name of the checkpoint files
-    checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_BOT")
+        # Directory where the checkpoints will be saved
+        model.save_weights(checkpoint_prefix)
 
-    model.save_weights(checkpoint_prefix)
     return model
