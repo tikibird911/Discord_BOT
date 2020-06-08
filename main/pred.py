@@ -2,17 +2,8 @@
 from main.model import (preprocess_sentence,
                         load_conversations,
                         get_model)
-import tensorflow_datasets as tfds
 import tensorflow as tf
-
-
-def get_token(convo, speach_lines):
-    questions, answers = load_conversations(convo, speach_lines)
-
-    # Build tokenizer using tfds for both questions and answers
-    tokenizer = tfds.features.text.SubwordTextEncoder.build_from_corpus(
-        questions + answers, target_vocab_size=2 ** 13)
-    return tokenizer
+import pickle
 
 
 def evaluate(sentence, model, tokenizer):
@@ -44,9 +35,10 @@ def evaluate(sentence, model, tokenizer):
     return tf.squeeze(output, axis=0)
 
 
-def predict(sentence, tokenizer, model):
+def predict(sentence, model):
+    with open('token.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
     prediction = evaluate(sentence, model, tokenizer)
-
     predicted_sentence = tokenizer.decode(
       [i for i in prediction if i < tokenizer.vocab_size])
 

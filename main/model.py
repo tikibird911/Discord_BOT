@@ -2,8 +2,17 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 import tensorflow as tf
-from main.pred import get_token
 import re
+import tensorflow_datasets as tfds
+import pickle
+
+
+def get_token(convo, speach_lines):
+    questions, answers = load_conversations(convo, speach_lines)
+    # Build tokenizer using tfds for both questions and answers
+    tokenizer = tfds.features.text.SubwordTextEncoder.build_from_corpus(
+        questions + answers, target_vocab_size=2 ** 13)
+    return tokenizer, questions, answers
 
 
 def preprocess_sentence(sentence):
@@ -216,6 +225,7 @@ def encoder_layer(units, d_model, num_heads, dropout, name="encoder_layer"):
     return tf.keras.Model(
       inputs=[inputs, padding_mask], outputs=outputs, name=name)
 
+
 def encoder(vocab_size,
             num_layers,
             units,
@@ -366,11 +376,11 @@ def transformer(vocab_size,
 
 
 def get_model(VOCAB_SIZE,
-              NUM_LAYERS = 4,
+              NUM_LAYERS = 2,
              D_MODEL = 512,
              NUM_HEADS = 8,
-             UNITS = 2048,
-             DROPOUT = 0.1):
+             UNITS = 1024,
+             DROPOUT = 0.3):
     tf.keras.backend.clear_session()
 
     model = transformer(
@@ -414,7 +424,9 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
 
 def train_model(convo, speach_lines, EPOCHS=20, D_MODEL=512, load_model=True):
 
-    tokenizer = get_token(convo, speach_lines)
+    tokenizer, questions, answers = get_token(convo, speach_lines)
+    with open('token.pickle', 'wb') as handle:
+        pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
     # Define start and end token to indicate the start and end of a sentence
     START_TOKEN, END_TOKEN = [tokenizer.vocab_size], [tokenizer.vocab_size + 1]
 
