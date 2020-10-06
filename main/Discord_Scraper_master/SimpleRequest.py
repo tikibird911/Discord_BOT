@@ -1,9 +1,4 @@
-#
-# Author  : Dracovian (https://github.com/Dracovian)
-# Date    : November 20, 2019
-# License : WTFPL
-# Module  : SimpleRequest
-#
+
 
 # Give us access to the standard output and error streams.
 from sys import stderr, version_info
